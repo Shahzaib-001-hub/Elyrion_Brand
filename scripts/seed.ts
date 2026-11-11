@@ -37,12 +37,24 @@ async function seedDatabase() {
     const insertedCategories = await Category.insertMany(INITIAL_CATEGORIES);
     console.log(`✓ Seeded ${insertedCategories.length} categories.`);
 
+    const categoryMap = new Map();
+    insertedCategories.forEach((cat) => {
+      categoryMap.set(cat.slug.toLowerCase(), cat._id);
+      categoryMap.set(cat.name.toLowerCase(), cat._id);
+    });
+
     // 2. Seed Products
     console.log('→ Seeding 50ml transparent flacon creations...');
     await Product.deleteMany({});
     const productsToInsert = INITIAL_PRODUCTS.map((p) => {
-      const { _id, ...rest } = p;
-      return rest;
+      const { _id, categories, ...rest } = p;
+      const catIds = categories
+        .map((c) => categoryMap.get(c.toLowerCase()) || categoryMap.get(c.toLowerCase().replace(/\s+/g, '-')))
+        .filter(Boolean);
+      return {
+        ...rest,
+        categories: catIds,
+      };
     });
     const insertedProducts = await Product.insertMany(productsToInsert);
     console.log(`✓ Seeded ${insertedProducts.length} fragrances.`);
@@ -50,7 +62,20 @@ async function seedDatabase() {
     // 3. Seed Bundles & Tiers
     console.log('→ Seeding curated discovery sets & tier rules...');
     await CuratedBundle.deleteMany({});
-    await CuratedBundle.insertMany(INITIAL_CURATED_BUNDLES);
+    
+    // Map bundle product IDs to newly inserted product IDs
+    const bundleProductMap: Record<string, any> = {};
+    insertedProducts.forEach((p, idx) => {
+      const orig = INITIAL_PRODUCTS[idx];
+      if (orig) bundleProductMap[orig._id] = p._id;
+    });
+
+    const bundlesToInsert = INITIAL_CURATED_BUNDLES.map((b) => ({
+      ...b,
+      products: b.productIds.map((pid) => bundleProductMap[pid] || insertedProducts[0]._id),
+    }));
+
+    await CuratedBundle.insertMany(bundlesToInsert);
 
     await BundleTierConfig.deleteMany({});
     await BundleTierConfig.create({
