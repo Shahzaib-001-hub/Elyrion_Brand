@@ -184,7 +184,9 @@ export async function getProducts(filter?: {
       if (filter?.sort === 'featured') sortOptions = { stock: -1 };
 
       const products = await Product.find(query).sort(sortOptions).lean();
-      if (products.length > 0) return products;
+      if (products.length > 0) {
+        return JSON.parse(JSON.stringify(products));
+      }
     } catch (e) {
       console.warn('MongoDB query fallback to local products');
     }
@@ -251,7 +253,7 @@ export async function getProductBySlug(slug: string) {
   if (db) {
     try {
       const product = await Product.findOne({ slug }).lean();
-      if (product) return product;
+      if (product) return JSON.parse(JSON.stringify(product));
     } catch (e) {
       // fallback
     }
@@ -305,7 +307,7 @@ export async function getCuratedBundles() {
   if (db) {
     try {
       const bundles = await CuratedBundle.find({ active: true }).lean();
-      if (bundles.length > 0) return bundles;
+      if (bundles.length > 0) return JSON.parse(JSON.stringify(bundles));
     } catch (e) {}
   }
   return INITIAL_CURATED_BUNDLES;
@@ -316,7 +318,7 @@ export async function getBundleTierConfig() {
   if (db) {
     try {
       const config = await BundleTierConfig.findOne({ active: true }).lean();
-      if (config) return config;
+      if (config) return JSON.parse(JSON.stringify(config));
     } catch (e) {}
   }
   return { tiers: INITIAL_TIER_RULES, active: true };
@@ -328,7 +330,7 @@ export async function getMoodQuizConfig() {
   if (db) {
     try {
       const config = await MoodQuizConfig.findOne({ active: true }).lean();
-      if (config) return config;
+      if (config) return JSON.parse(JSON.stringify(config));
     } catch (e) {}
   }
   return INITIAL_QUIZ_CONFIG;

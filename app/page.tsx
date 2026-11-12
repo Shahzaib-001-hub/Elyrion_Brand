@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { getProducts, getCuratedBundles } from '@/lib/data-service';
 import { ProductCard } from '@/components/ProductCard';
+import { HeroShowcase } from '@/components/HeroShowcase';
 import { formatPrice } from '@/lib/format';
 
 export const revalidate = 60; // 1 minute ISR
@@ -25,61 +26,8 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-24 sm:space-y-32 pb-16">
-      {/* 1. EDITORIAL HERO SECTION */}
-      <section className="relative min-h-[88vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8">
-        {/* Subtle Ambient Background Lighting */}
-        <div className="absolute inset-0 bg-radial from-[rgba(201,169,110,0.12)] via-transparent to-transparent pointer-events-none" />
-
-        <div className="relative max-w-5xl mx-auto text-center space-y-8 py-12">
-          {/* Eyebrow badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[var(--border-gold)] bg-[var(--bg-surface)]/80 backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-gold)] animate-pulse" />
-            <span className="label-editorial text-[10px] text-[var(--accent-gold)]">
-              The 2026 Private Distillations
-            </span>
-          </div>
-
-          {/* Main Editorial Headline */}
-          <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight leading-[1.08] text-[var(--text-primary)]">
-            Olfactory art in <span className="italic font-normal text-[var(--accent-gold)]">transparent glass</span>,
-            <br className="hidden sm:inline" /> handcrafted in London.
-          </h1>
-
-          {/* Subtitle */}
-          <p className="max-w-2xl mx-auto text-sm sm:text-base text-[var(--text-secondary)] font-light leading-relaxed">
-            Elyrion distills the world’s rarest botanical resins, precious ouds, and dewy blossoms into clean, transparent 50ml flacons crowned with champagne gold. An intimate quiet luxury made to linger on skin.
-          </p>
-
-          {/* CTA Button Group */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Link href="/fragrances" className="btn-gold btn-shine w-full sm:w-auto">
-              Explore The Collection
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2 w-3.5 h-3.5" />
-            </Link>
-            <Link href="/quiz" className="btn-outline-gold w-full sm:w-auto">
-              Find Your Fragrance Mood
-            </Link>
-          </div>
-
-          {/* Hero Flacon Image Composition */}
-          <div className="pt-8 max-w-3xl mx-auto">
-            <div className="relative aspect-[16/9] sm:aspect-[21/9] rounded border border-[var(--border-gold)] overflow-hidden shadow-2xl">
-              <Image
-                src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=85&w=1600&auto=format&fit=crop"
-                alt="Elyrion transparent glass flacons in studio lighting"
-                fill
-                priority
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between text-xs text-[var(--text-secondary)]">
-                <span className="label-editorial text-[10px] text-[var(--accent-gold)]">50ml Eau de Parfum & Parfum Extrait</span>
-                <span className="hidden sm:inline font-serif italic text-sm text-[var(--text-primary)]">Bottled at 28% concentration</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 1. DYNAMIC WATERMARK HERO SHOWCASE (Matches user reference design) */}
+      <HeroShowcase products={allProducts as any} />
 
       {/* 2. THE THREE PILLARS OF CRAFTSMANSHIP */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
